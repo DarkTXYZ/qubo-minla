@@ -279,6 +279,11 @@ def experiment(results_path="results.csv", verbose=False):
     
     # Read datasets
     datasets = read_datasets()
+    
+    # sort datasets by number of nodes
+    for dataset_type in datasets:
+        datasets[dataset_type] = dict(sorted(datasets[dataset_type].items(), key=lambda item: item[1].number_of_nodes()))
+        
     df_rows = []
     
     all_graphs = []
