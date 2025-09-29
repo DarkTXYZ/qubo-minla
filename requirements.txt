@@ -1,0 +1,30 @@
+# Core QUBO and optimization libraries
+pyqubo>=1.4.0
+dwave-neal>=0.6.0
+dwave-tabu>=0.4.0
+
+# Graph processing and network analysis
+networkx>=3.0
+
+# Scientific computing and numerical libraries
+numpy>=1.21.0
+scipy>=1.9.0
+
+# Data manipulation and analysis
+pandas>=1.5.0
+
+# Progress bars and UI
+tqdm>=4.64.0
+
+# Google OR-Tools (used in experiment_2_heuristics.py)
+ortools>=9.4.0
+
+# Standard library dependencies (already included in Python)
+# - logging
+# - math
+# - time
+# - threading
+# - os
+# - dataclasses
+# - typing
+# - argparse
