@@ -1,0 +1,33 @@
+id,heuristics,n,m,val,penalty_param,feasible_rate,average,std,range
+synthetic_random_n10.txt,Greedy,10,17,62.0,,,,,
+synthetic_random_n10.txt,Spectral,10,17,42.0,,,,,
+synthetic_random_n10.txt,SA,10,17,,103.0,0.7,62.285714285714285,6.40790328343023,"(53, 75)"
+synthetic_random_n10.txt,TB,10,17,,103.0,1.0,35.0,0.0,"(35, 35)"
+synthetic_random_n20.txt,Greedy,20,67,453.0,,,,,
+synthetic_random_n20.txt,Spectral,20,67,355.0,,,,,
+synthetic_random_n20.txt,SA,20,67,,822.0,0.0,0.0,0.0,"(0, 0)"
+synthetic_random_n20.txt,TB,20,67,,822.0,1.0,313.6,2.3748684174075834,"(307, 316)"
+synthetic_random_n30.txt,Greedy,30,143,1525.0,,,,,
+synthetic_random_n30.txt,Spectral,30,143,1100.0,,,,,
+synthetic_random_n30.txt,SA,30,143,,2675.0,0.0,0.0,0.0,"(0, 0)"
+synthetic_random_n30.txt,TB,30,143,,2675.0,0.0,0.0,0.0,"(0, 0)"
+synthetic_random_n50.txt,Greedy,50,368,6059.0,,,,,
+synthetic_random_n50.txt,Spectral,50,368,5040.0,,,,,
+synthetic_random_n50.txt,SA,50,368,,11740.0,0.0,0.0,0.0,"(0, 0)"
+synthetic_random_n50.txt,TB,50,368,,11740.0,0.0,0.0,0.0,"(0, 0)"
+synthetic_random_n100.txt,Greedy,100,1477,48511.0,,,,,
+synthetic_random_n100.txt,Spectral,100,1477,42483.0,,,,,
+synthetic_random_n100.txt,SA,100,1477,,94177.0,0.0,0.0,0.0,"(0, 0)"
+synthetic_random_n100.txt,TB,100,1477,,94177.0,0.0,0.0,0.0,"(0, 0)"
+real_world_iscas89-s27.txt,Greedy,9,8,27.0,,,,,
+real_world_iscas89-s27.txt,Spectral,9,8,9.0,,,,,
+real_world_iscas89-s27.txt,SA,9,8,,50.0,0.6,26.166666666666668,1.7716909687891083,"(24, 29)"
+real_world_iscas89-s27.txt,TB,9,8,,50.0,1.0,9.0,0.0,"(9, 9)"
+real_world_karate.txt,Greedy,34,78,982.0,,,,,
+real_world_karate.txt,Spectral,34,78,403.0,,,,,
+real_world_karate.txt,SA,34,78,,2002.0,0.0,0.0,0.0,"(0, 0)"
+real_world_karate.txt,TB,34,78,,2002.0,0.0,0.0,0.0,"(0, 0)"
+real_world_chesapeake.txt,Greedy,39,170,2481.0,,,,,
+real_world_chesapeake.txt,Spectral,39,170,1231.0,,,,,
+real_world_chesapeake.txt,SA,39,170,,4539.0,0.0,0.0,0.0,"(0, 0)"
+real_world_chesapeake.txt,TB,39,170,,4539.0,0.0,0.0,0.0,"(0, 0)"

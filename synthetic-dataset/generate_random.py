@@ -30,14 +30,14 @@ def generate_random_graphs():
         
         # Generate random graph using Erdős–Rényi model
         # Use different seed for each graph to ensure variety
-        current_seed = seed + i
+        current_seed = seed
         G = nx.gnp_random_graph(n, edge_prob, seed=current_seed)
         
         # Get number of edges
         m = G.number_of_edges()
         
         # Define output filename
-        filename = f"{output_dir}random_n{n}_p{edge_prob}_seed{current_seed}.txt"
+        filename = f"{output_dir}random_n{n}.txt"
         
         # Save as edge list in the specified format
         with open(filename, 'w') as f:
