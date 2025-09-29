@@ -29,6 +29,8 @@ def create_config():
                         help='Number of simulation runs for SA and TB solvers')
     parser.add_argument('--sa-sweeps', type=int, default=1000,
                         help='Number of sweeps for Simulated Annealing')
+    parser.add_argument('--sa-reads', type=int, default=1,
+                        help='Number of reads for Simulated Annealing')
     parser.add_argument('--tb-tenure', type=int, default=20,
                         help='Tenure parameter for Tabu Search')
     
@@ -304,7 +306,7 @@ def run_heuristics(G, n, bqm, model, config):
         sa_start = time.time()
         SA_solver = neal.SimulatedAnnealingSampler()
         SA_results = run_solver(SA_solver, bqm, model, n, config.num_simulate, "running SA", 
-                               num_sweeps=config.sa_sweeps, num_reads=1)
+                               num_sweeps=config.sa_sweeps, num_reads=config.sa_reads)
         sa_time = time.time() - sa_start
         logging.info(f"SA solver completed in {sa_time:.3f}s")
         
@@ -366,6 +368,7 @@ def experiment(config):
     logger.info(f"  Results path: {config.results_path}")
     logger.info(f"  Number of simulations: {config.num_simulate}")
     logger.info(f"  SA sweeps: {config.sa_sweeps}")
+    logger.info(f"  SA reads: {config.sa_reads}")
     logger.info(f"  TB tenure: {config.tb_tenure}")
     logger.info(f"  Skip datasets: {config.skip_datasets}")
     logger.info(f"  Skip heuristics: {config.skip_heuristics}")
