@@ -10,18 +10,80 @@ from dwave.samplers import TabuSampler
 from scipy.sparse.linalg import eigsh
 import time
 import logging
+import argparse
+import json
 
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('experiment_log.txt'),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
+def create_config():
+    """Create configuration from command line arguments"""
+    parser = argparse.ArgumentParser(description='QUBO MinLA Experiment Configuration')
+    
+    # Dataset configuration
+    parser.add_argument('--synthetic-dir', type=str, default='synthetic-dataset',
+                        help='Path to synthetic dataset directory')
+    parser.add_argument('--real-world-dir', type=str, default='real-world-dataset',
+                        help='Path to real-world dataset directory')
+    
+    # Solver configuration
+    parser.add_argument('--num-simulate', type=int, default=10,
+                        help='Number of simulation runs for SA and TB solvers')
+    parser.add_argument('--sa-sweeps', type=int, default=1000,
+                        help='Number of sweeps for Simulated Annealing')
+    parser.add_argument('--tb-tenure', type=int, default=20,
+                        help='Tenure parameter for Tabu Search')
+    
+    # Output configuration
+    parser.add_argument('--results-path', type=str, default='results.csv',
+                        help='Output path for results CSV file')
+    parser.add_argument('--log-file', type=str, default='experiment_log.txt',
+                        help='Log file path')
+    
+    # Logging configuration
+    parser.add_argument('--log-level', type=str, default='INFO',
+                        choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'],
+                        help='Logging level')
+    parser.add_argument('--verbose', action='store_true',
+                        help='Enable verbose output')
+    
+    # Processing configuration
+    parser.add_argument('--skip-datasets', type=str, nargs='*', default=[],
+                        help='Dataset types to skip (synthetic, real_world)')
+    parser.add_argument('--max-nodes', type=int, default=None,
+                        help='Maximum number of nodes to process (skip larger graphs)')
+    parser.add_argument('--skip-heuristics', type=str, nargs='*', default=[],
+                        choices=['Greedy', 'Spectral', 'SA', 'TB'],
+                        help='Heuristics to skip')
+    
+    # Configuration file support
+    parser.add_argument('--config', type=str, default=None,
+                        help='Path to JSON configuration file')
+    
+    args = parser.parse_args()
+    
+    # Load configuration from file if provided
+    if args.config and os.path.exists(args.config):
+        with open(args.config, 'r') as f:
+            config_dict = json.load(f)
+            # Update args with config file values (command line takes precedence)
+            for key, value in config_dict.items():
+                if not hasattr(args, key) or getattr(args, key) == parser.get_default(key):
+                    setattr(args, key, value)
+    
+    return args
+
+
+def setup_logging(config):
+    """Setup logging configuration"""
+    logging.basicConfig(
+        level=getattr(logging, config.log_level),
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler(config.log_file),
+            logging.StreamHandler()
+        ],
+        force=True  # Override existing configuration
+    )
+    return logging.getLogger(__name__)
 
 
 def read_graph_from_edge_list(file_path: str) -> nx.Graph:
@@ -32,41 +94,52 @@ def read_graph_from_edge_list(file_path: str) -> nx.Graph:
             u, v = map(int, line.strip().split())
             G.add_edge(u, v)
     elapsed = time.time() - start_time
-    logger.info(f"Graph loaded from {file_path} in {elapsed:.3f}s")
+    logging.info(f"Graph loaded from {file_path} in {elapsed:.3f}s")
     return G
 
 
-def read_datasets():
+def read_datasets(config):
     start_time = time.time()
-    logger.info("Starting dataset reading...")
+    logging.info("Starting dataset reading...")
     
     datasets = {}
     dataset_dirs = {
-        "synthetic": "synthetic-dataset",
-        "real_world": "real-world-dataset"
+        "synthetic": config.synthetic_dir,
+        "real_world": config.real_world_dir
     }
     
     for key, dir_path in dataset_dirs.items():
-        if not os.path.exists(dir_path):
-            logger.warning(f"Directory {dir_path} not found")
+        if key in config.skip_datasets:
+            logging.info(f"Skipping dataset type: {key}")
             continue
+            
+        if not os.path.exists(dir_path):
+            logging.warning(f"Directory {dir_path} not found")
+            continue
+            
         datasets[key] = {}
         for filename in os.listdir(dir_path):
             if filename.endswith(".txt"):
                 file_path = os.path.join(dir_path, filename)
-                logger.info(f"Reading dataset: {file_path}")
+                logging.info(f"Reading dataset: {file_path}")
                 G = read_graph_from_edge_list(file_path)
+                
+                # Skip graphs that are too large if max_nodes is specified
+                if config.max_nodes and G.number_of_nodes() > config.max_nodes:
+                    logging.info(f"Skipping {filename}: {G.number_of_nodes()} nodes > {config.max_nodes}")
+                    continue
+                    
                 datasets[key][filename] = G
-                logger.info(f"  Loaded graph with {G.number_of_nodes()} nodes and {G.number_of_edges()} edges")
+                logging.info(f"  Loaded graph with {G.number_of_nodes()} nodes and {G.number_of_edges()} edges")
     
     total_elapsed = time.time() - start_time
-    logger.info(f"Dataset reading completed in {total_elapsed:.3f}s")
+    logging.info(f"Dataset reading completed in {total_elapsed:.3f}s")
     return datasets
 
 
 def generate_qubo_for_MBSP(G):
     start_time = time.time()
-    logger.debug(f"Generating QUBO for graph with {G.number_of_nodes()} nodes")
+    logging.debug(f"Generating QUBO for graph with {G.number_of_nodes()} nodes")
     
     V = G.number_of_nodes()
     E = list(G.edges())
@@ -94,7 +167,7 @@ def generate_qubo_for_MBSP(G):
     bqm = model.to_bqm()
     
     elapsed = time.time() - start_time
-    logger.debug(f"QUBO generation completed in {elapsed:.3f}s")
+    logging.debug(f"QUBO generation completed in {elapsed:.3f}s")
     return model, bqm, _lambda
 
 
@@ -146,7 +219,7 @@ def greedy_minla(G):
     
     result = sum(abs(assigned[u] - assigned[v]) for u, v in G.edges())
     elapsed = time.time() - start_time
-    logger.debug(f"Greedy MinLA completed in {elapsed:.3f}s, result: {result}")
+    logging.debug(f"Greedy MinLA completed in {elapsed:.3f}s, result: {result}")
     return result
 
 
@@ -155,7 +228,7 @@ def spectral_minla(G):
     
     if G.number_of_nodes() < 2:
         elapsed = time.time() - start_time
-        logger.debug(f"Spectral MinLA (trivial case) completed in {elapsed:.3f}s")
+        logging.debug(f"Spectral MinLA (trivial case) completed in {elapsed:.3f}s")
         return 0
         
     L = nx.laplacian_matrix(G).astype(float)
@@ -166,13 +239,13 @@ def spectral_minla(G):
     
     result = sum(abs(label_map[u] - label_map[v]) for u, v in G.edges())
     elapsed = time.time() - start_time
-    logger.debug(f"Spectral MinLA completed in {elapsed:.3f}s, result: {result}")
+    logging.debug(f"Spectral MinLA completed in {elapsed:.3f}s, result: {result}")
     return result
 
 
 def run_solver(solver, bqm, model, n, num_simulate, desc, **solver_params):
     start_time = time.time()
-    logger.debug(f"Starting {desc} with {num_simulate} simulations")
+    logging.debug(f"Starting {desc} with {num_simulate} simulations")
     
     results = []
     solver_iter = tqdm(range(num_simulate), desc=desc, unit="its", leave=False)
@@ -185,14 +258,14 @@ def run_solver(solver, bqm, model, n, num_simulate, desc, **solver_params):
             feasible, val, _ = get_best_sample(decoded_samples, n)
             results.append((feasible, val))
         except Exception as e:
-            logger.warning(f"Error in {desc} iteration {i}: {e}")
+            logging.warning(f"Error in {desc} iteration {i}: {e}")
             results.append((False, float('inf')))
         
         iter_elapsed = time.time() - iter_start
-        logger.debug(f"{desc} iteration {i+1}/{num_simulate} completed in {iter_elapsed:.3f}s")
+        logging.debug(f"{desc} iteration {i+1}/{num_simulate} completed in {iter_elapsed:.3f}s")
     
     total_elapsed = time.time() - start_time
-    logger.info(f"{desc} completed in {total_elapsed:.3f}s")
+    logging.info(f"{desc} completed in {total_elapsed:.3f}s")
     return results
 
 
@@ -203,60 +276,73 @@ def calculate_stats(values):
     return float(np.mean(values_array)), float(np.std(values_array)), (int(np.min(values_array)), int(np.max(values_array)))
 
 
-def run_heuristics(G, n, bqm, model, num_simulate=10, verbose=False):
+def run_heuristics(G, n, bqm, model, config):
     start_time = time.time()
     graph_id = f"n{n}_m{G.number_of_edges()}"
-    logger.info(f"Running heuristics for graph {graph_id}")
+    logging.info(f"Running heuristics for graph {graph_id}")
+    
+    results = {}
     
     # Greedy
-    greedy_start = time.time()
-    val_greedy = greedy_minla(G)
-    greedy_time = time.time() - greedy_start
-    logger.info(f"Greedy completed in {greedy_time:.3f}s")
+    if "Greedy" not in config.skip_heuristics:
+        greedy_start = time.time()
+        val_greedy = greedy_minla(G)
+        greedy_time = time.time() - greedy_start
+        results["Greedy"] = val_greedy
+        logging.info(f"Greedy completed in {greedy_time:.3f}s")
     
     # Spectral
-    spectral_start = time.time()
-    val_spectral = spectral_minla(G)
-    spectral_time = time.time() - spectral_start
-    logger.info(f"Spectral completed in {spectral_time:.3f}s")
+    if "Spectral" not in config.skip_heuristics:
+        spectral_start = time.time()
+        val_spectral = spectral_minla(G)
+        spectral_time = time.time() - spectral_start
+        results["Spectral"] = val_spectral
+        logging.info(f"Spectral completed in {spectral_time:.3f}s")
     
     # SA Solver
-    sa_start = time.time()
-    SA_solver = neal.SimulatedAnnealingSampler()
-    SA_results = run_solver(SA_solver, bqm, model, n, num_simulate, "running SA", 
-                           num_sweeps=1000, num_reads=1)
-    sa_time = time.time() - sa_start
-    logger.info(f"SA solver completed in {sa_time:.3f}s")
-    
-    # TB Solver
-    tb_start = time.time()
-    TB_solver = TabuSampler()
-    TB_results = run_solver(TB_solver, bqm, model, n, num_simulate, "running TB",
-                           tenure=20, num_reads=1)
-    tb_time = time.time() - tb_start
-    logger.info(f"TB solver completed in {tb_time:.3f}s")
-    
-    results = {
-        "Greedy": val_greedy,
-        "Spectral": val_spectral
-    }
-    
-    for solver_name, solver_results in [("SA", SA_results), ("TB", TB_results)]:
-        feasible_results = [val for feasible, val in solver_results if feasible]
-        feasibility_rate = float(np.mean([feasible for feasible, _ in solver_results]))
+    if "SA" not in config.skip_heuristics:
+        sa_start = time.time()
+        SA_solver = neal.SimulatedAnnealingSampler()
+        SA_results = run_solver(SA_solver, bqm, model, n, config.num_simulate, "running SA", 
+                               num_sweeps=config.sa_sweeps, num_reads=1)
+        sa_time = time.time() - sa_start
+        logging.info(f"SA solver completed in {sa_time:.3f}s")
+        
+        feasible_results = [val for feasible, val in SA_results if feasible]
+        feasibility_rate = float(np.mean([feasible for feasible, _ in SA_results]))
         avg, std, range_vals = calculate_stats(feasible_results)
         
-        results[solver_name] = {
+        results["SA"] = {
             "feasibility": feasibility_rate,
             "average": avg,
             "std": std,
             "range": range_vals
         }
+        logging.info(f"SA: feasibility={feasibility_rate:.3f}, avg={avg:.2f}")
+    
+    # TB Solver
+    if "TB" not in config.skip_heuristics:
+        tb_start = time.time()
+        TB_solver = TabuSampler()
+        TB_results = run_solver(TB_solver, bqm, model, n, config.num_simulate, "running TB",
+                               tenure=config.tb_tenure, num_reads=1)
+        tb_time = time.time() - tb_start
+        logging.info(f"TB solver completed in {tb_time:.3f}s")
         
-        logger.info(f"{solver_name}: feasibility={feasibility_rate:.3f}, avg={avg:.2f}")
+        feasible_results = [val for feasible, val in TB_results if feasible]
+        feasibility_rate = float(np.mean([feasible for feasible, _ in TB_results]))
+        avg, std, range_vals = calculate_stats(feasible_results)
+        
+        results["TB"] = {
+            "feasibility": feasibility_rate,
+            "average": avg,
+            "std": std,
+            "range": range_vals
+        }
+        logging.info(f"TB: feasibility={feasibility_rate:.3f}, avg={avg:.2f}")
     
     total_elapsed = time.time() - start_time
-    logger.info(f"All heuristics for graph {graph_id} completed in {total_elapsed:.3f}s")
+    logging.info(f"All heuristics for graph {graph_id} completed in {total_elapsed:.3f}s")
     return results
 
 
@@ -273,12 +359,21 @@ def create_result_row(graph_id, heuristic_name, n, m, penalty_param=None, **kwar
     return row
 
 
-def experiment(results_path="results.csv", verbose=False):
+def experiment(config):
     experiment_start = time.time()
-    logger.info("Starting experiment")
+    logger = setup_logging(config)
+    logger.info("Starting experiment with configuration:")
+    logger.info(f"  Results path: {config.results_path}")
+    logger.info(f"  Number of simulations: {config.num_simulate}")
+    logger.info(f"  SA sweeps: {config.sa_sweeps}")
+    logger.info(f"  TB tenure: {config.tb_tenure}")
+    logger.info(f"  Skip datasets: {config.skip_datasets}")
+    logger.info(f"  Skip heuristics: {config.skip_heuristics}")
+    if config.max_nodes:
+        logger.info(f"  Max nodes: {config.max_nodes}")
     
     # Read datasets
-    datasets = read_datasets()
+    datasets = read_datasets(config)
     
     # sort datasets by number of nodes
     for dataset_type in datasets:
@@ -314,22 +409,25 @@ def experiment(results_path="results.csv", verbose=False):
             
             # Run heuristics
             heuristics_start = time.time()
-            heuristics = run_heuristics(G, n, bqm, model, verbose=verbose)
+            heuristics = run_heuristics(G, n, bqm, model, config)
             heuristics_time = time.time() - heuristics_start
             logger.info(f"Heuristics for {graph_id} completed in {heuristics_time:.3f}s")
             
             # Create result rows
-            df_rows.append(create_result_row(graph_id, "Greedy", n, m, val=heuristics["Greedy"]))
-            df_rows.append(create_result_row(graph_id, "Spectral", n, m, val=heuristics["Spectral"]))
+            if "Greedy" in heuristics:
+                df_rows.append(create_result_row(graph_id, "Greedy", n, m, val=heuristics["Greedy"]))
+            if "Spectral" in heuristics:
+                df_rows.append(create_result_row(graph_id, "Spectral", n, m, val=heuristics["Spectral"]))
             
             for solver_name in ["SA", "TB"]:
-                df_rows.append(create_result_row(
-                    graph_id, solver_name, n, m, penalty_param,
-                    feasible_rate=heuristics[solver_name]["feasibility"],
-                    average=heuristics[solver_name]["average"],
-                    std=heuristics[solver_name]["std"],
-                    range=heuristics[solver_name]["range"]
-                ))
+                if solver_name in heuristics:
+                    df_rows.append(create_result_row(
+                        graph_id, solver_name, n, m, penalty_param,
+                        feasible_rate=heuristics[solver_name]["feasibility"],
+                        average=heuristics[solver_name]["average"],
+                        std=heuristics[solver_name]["std"],
+                        range=heuristics[solver_name]["range"]
+                    ))
             
             graph_time = time.time() - graph_start
             logger.info(f"Graph {graph_id} processing completed in {graph_time:.3f}s")
@@ -341,14 +439,15 @@ def experiment(results_path="results.csv", verbose=False):
     # Save results
     save_start = time.time()
     df = pd.DataFrame(df_rows)
-    os.makedirs(os.path.dirname(results_path), exist_ok=True) if os.path.dirname(results_path) else None
-    df.to_csv(results_path, index=False)
+    os.makedirs(os.path.dirname(config.results_path), exist_ok=True) if os.path.dirname(config.results_path) else None
+    df.to_csv(config.results_path, index=False)
     save_time = time.time() - save_start
-    logger.info(f"Results saved to {results_path} in {save_time:.3f}s")
+    logger.info(f"Results saved to {config.results_path} in {save_time:.3f}s")
     
     total_time = time.time() - experiment_start
     logger.info(f"Experiment completed in {total_time:.3f}s")
 
 
 if __name__ == "__main__":
-    experiment(verbose=True)
+    config = create_config()
+    experiment(config)
