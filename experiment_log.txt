@@ -1404,3 +1404,106 @@
 2025-09-29 23:15:06,707 - INFO - All heuristics for graph n39_m170 completed in 1.198s
 2025-09-29 23:15:06,709 - INFO - Results saved to results.csv in 0.002s
 2025-09-29 23:15:06,709 - INFO - Experiment completed in 49.302s
+2025-09-29 16:24:08,374 - INFO - Starting experiment with configuration:
+2025-09-29 16:24:08,374 - INFO -   Results path: results.csv
+2025-09-29 16:24:08,374 - INFO -   Number of simulations: 10
+2025-09-29 16:24:08,375 - INFO -   Parallel graphs: True
+2025-09-29 16:24:08,375 - INFO -   Parallel solvers: True
+2025-09-29 16:24:08,375 - INFO -   Cache QUBO: True
+2025-09-29 16:24:08,375 - INFO -   Number of workers: 4
+2025-09-29 16:24:08,375 - INFO - Starting dataset reading...
+2025-09-29 16:24:08,377 - INFO - Graph loaded from synthetic-dataset/random_n30.txt in 0.001s
+2025-09-29 16:24:08,377 - INFO - Graph loaded from synthetic-dataset/random_n20.txt in 0.001s
+2025-09-29 16:24:08,380 - INFO - Graph loaded from synthetic-dataset/random_n100.txt in 0.004s
+2025-09-29 16:24:08,381 - INFO - Graph loaded from synthetic-dataset/random_n10.txt in 0.003s
+2025-09-29 16:24:08,382 - INFO - Graph loaded from real-world-dataset/chesapeake.txt in 0.001s
+2025-09-29 16:24:08,382 - INFO - Graph loaded from real-world-dataset/karate.txt in 0.001s
+2025-09-29 16:24:08,385 - INFO - Graph loaded from synthetic-dataset/random_n50.txt in 0.004s
+2025-09-29 16:24:08,386 - INFO - Graph loaded from real-world-dataset/iscas89-s27.txt in 0.004s
+2025-09-29 16:24:08,386 - INFO -   Loaded graph random_n20.txt with 20 nodes and 67 edges
+2025-09-29 16:24:08,386 - INFO -   Loaded graph random_n30.txt with 30 nodes and 143 edges
+2025-09-29 16:24:08,386 - INFO -   Loaded graph random_n100.txt with 100 nodes and 1477 edges
+2025-09-29 16:24:08,387 - INFO -   Loaded graph random_n10.txt with 10 nodes and 17 edges
+2025-09-29 16:24:08,387 - INFO -   Loaded graph random_n50.txt with 50 nodes and 368 edges
+2025-09-29 16:24:08,387 - INFO -   Loaded graph chesapeake.txt with 39 nodes and 170 edges
+2025-09-29 16:24:08,387 - INFO -   Loaded graph karate.txt with 34 nodes and 78 edges
+2025-09-29 16:24:08,387 - INFO -   Loaded graph iscas89-s27.txt with 9 nodes and 8 edges
+2025-09-29 16:24:08,387 - INFO - Dataset reading completed in 0.012s
+2025-09-29 16:24:08,387 - INFO - Total graphs to process: 8
+2025-09-29 16:24:08,505 - INFO - Running heuristics for graph n10_m17
+2025-09-29 16:24:08,518 - INFO - Greedy completed
+2025-09-29 16:24:08,533 - INFO - Spectral completed
+2025-09-29 16:24:08,696 - INFO - Running heuristics for graph n20_m67
+2025-09-29 16:24:08,703 - INFO - Greedy completed
+2025-09-29 16:24:08,710 - INFO - Spectral completed
+2025-09-29 16:24:10,093 - INFO - Running heuristics for graph n30_m143
+2025-09-29 16:24:10,102 - INFO - Greedy completed
+2025-09-29 16:24:10,121 - INFO - Spectral completed
+2025-09-29 16:24:20,858 - INFO - Running heuristics for graph n50_m368
+2025-09-29 16:24:20,884 - INFO - Greedy completed
+2025-09-29 16:24:20,910 - INFO - Spectral completed
+2025-09-29 16:24:22,232 - INFO - running SA completed in 13.699s
+2025-09-29 16:24:22,250 - INFO - SA solver completed in 13.716s
+2025-09-29 16:24:22,250 - INFO - SA: feasibility=1.000, avg=47.80
+2025-09-29 16:24:22,404 - INFO - running TB completed in 0.153s
+2025-09-29 16:24:22,404 - INFO - TB solver completed in 0.154s
+2025-09-29 16:24:22,405 - INFO - TB: feasibility=1.000, avg=37.90
+2025-09-29 16:24:22,405 - INFO - All heuristics for graph n10_m17 completed in 13.900s
+2025-09-29 16:25:20,101 - INFO - running SA completed in 71.380s
+2025-09-29 16:25:20,102 - INFO - SA solver completed in 71.381s
+2025-09-29 16:25:20,103 - INFO - SA: feasibility=1.000, avg=417.50
+2025-09-29 16:25:20,409 - INFO - running TB completed in 0.306s
+2025-09-29 16:25:20,410 - INFO - TB solver completed in 0.307s
+2025-09-29 16:25:20,410 - INFO - TB: feasibility=0.100, avg=313.00
+2025-09-29 16:25:20,410 - INFO - All heuristics for graph n20_m67 completed in 71.715s
+2025-09-29 16:25:20,447 - INFO - Running heuristics for graph n9_m8
+2025-09-29 16:25:20,466 - INFO - Greedy completed
+2025-09-29 16:25:20,468 - INFO - Spectral completed
+2025-09-29 16:25:31,183 - INFO - running SA completed in 10.714s
+2025-09-29 16:25:31,183 - INFO - SA solver completed in 10.715s
+2025-09-29 16:25:31,184 - INFO - SA: feasibility=1.000, avg=16.10
+2025-09-29 16:25:31,309 - INFO - running TB completed in 0.125s
+2025-09-29 16:25:31,310 - INFO - TB solver completed in 0.126s
+2025-09-29 16:25:31,310 - INFO - TB: feasibility=1.000, avg=9.30
+2025-09-29 16:25:31,311 - INFO - All heuristics for graph n9_m8 completed in 10.864s
+2025-09-29 16:25:32,892 - INFO - Running heuristics for graph n34_m78
+2025-09-29 16:25:32,902 - INFO - Greedy completed
+2025-09-29 16:25:32,907 - INFO - Spectral completed
+2025-09-29 16:27:12,043 - INFO - Running heuristics for graph n100_m1477
+2025-09-29 16:27:12,067 - INFO - Greedy completed
+2025-09-29 16:27:12,067 - INFO - Spectral completed
+2025-09-29 16:27:35,686 - INFO - running SA completed in 205.564s
+2025-09-29 16:27:35,688 - INFO - SA solver completed in 205.566s
+2025-09-29 16:27:35,688 - INFO - SA: feasibility=0.300, avg=1488.00
+2025-09-29 16:27:36,570 - INFO - running TB completed in 0.880s
+2025-09-29 16:27:36,571 - INFO - TB solver completed in 0.881s
+2025-09-29 16:27:36,571 - INFO - TB: feasibility=0.000, avg=0.00
+2025-09-29 16:27:36,571 - INFO - All heuristics for graph n30_m143 completed in 206.478s
+2025-09-29 16:27:40,965 - INFO - Running heuristics for graph n39_m170
+2025-09-29 16:27:40,980 - INFO - Greedy completed
+2025-09-29 16:27:40,990 - INFO - Spectral completed
+2025-09-29 16:29:21,064 - WARNING - Error in running SA iteration 0: 
+2025-09-29 16:31:45,530 - INFO - running SA completed in 372.608s
+2025-09-29 16:31:45,531 - INFO - SA solver completed in 372.610s
+2025-09-29 16:31:45,533 - INFO - SA: feasibility=0.000, avg=0.00
+2025-09-29 16:31:47,175 - INFO - running TB completed in 1.642s
+2025-09-29 16:31:47,180 - INFO - TB solver completed in 1.647s
+2025-09-29 16:31:47,192 - INFO - TB: feasibility=0.000, avg=0.00
+2025-09-29 16:31:47,193 - INFO - All heuristics for graph n34_m78 completed in 374.301s
+2025-09-29 16:32:12,468 - WARNING - Error in running SA iteration 0: 
+2025-09-29 16:35:49,642 - INFO - running SA completed in 488.638s
+2025-09-29 16:35:49,645 - INFO - SA solver completed in 488.640s
+2025-09-29 16:35:49,645 - INFO - SA: feasibility=0.000, avg=0.00
+2025-09-29 16:35:51,262 - INFO - running TB completed in 1.617s
+2025-09-29 16:35:51,278 - INFO - TB solver completed in 1.633s
+2025-09-29 16:35:51,279 - INFO - TB: feasibility=0.000, avg=0.00
+2025-09-29 16:35:51,279 - INFO - All heuristics for graph n39_m170 completed in 490.316s
+2025-09-29 16:37:12,469 - WARNING - Error in running SA iteration 1: 
+2025-09-29 16:38:14,363 - INFO - running SA completed in 833.452s
+2025-09-29 16:38:14,368 - INFO - SA solver completed in 833.456s
+2025-09-29 16:38:14,368 - INFO - SA: feasibility=0.000, avg=0.00
+2025-09-29 16:38:18,803 - INFO - running TB completed in 4.434s
+2025-09-29 16:38:18,859 - INFO - TB solver completed in 4.490s
+2025-09-29 16:38:18,870 - INFO - TB: feasibility=0.000, avg=0.00
+2025-09-29 16:38:18,870 - INFO - All heuristics for graph n50_m368 completed in 838.012s
+2025-09-29 16:42:12,470 - WARNING - Error in running SA iteration 2: 
