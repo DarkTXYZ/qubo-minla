@@ -10,7 +10,7 @@ def generate_random_graphs():
     Generate random graphs using Erdős–Rényi model and save as edge lists.
     """
     # Parameters from comments
-    node_sizes = [10, 20, 30, 50, 100]
+    node_sizes = [5, 10, 15, 20, 25]
     edge_prob = 0.3
     seed = 42
     output_dir = "./synthetic-dataset/"

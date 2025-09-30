@@ -1,157 +1,249 @@
-# change karate.txt to start with 0
-# Preprocess real-world datasets to ensure consistent 0-based indexing
+# Preprocess real-world datasets in raw data to ensure consistent 0-based indexing
 # and proper edge list format
 
 import os
 import networkx as nx
+import pandas as pd
+import re
 
-def preprocess_karate():
+def preprocess_enzymes_file(input_file, output_file):
     """
-    Convert karate.txt from 1-based to 0-based indexing
+    Preprocess ENZYMES dataset files.
+    These files appear to be 1-based indexed, convert to 0-based.
     """
-    input_file = "raw_data/karate.txt"
-    output_file = "karate.txt"
+    print(f"Processing ENZYMES file: {input_file}")
     
-    print(f"Processing {input_file}...")
-    
-    with open(input_file, 'r') as f_in, open(output_file, 'w') as f_out:
-        for line in f_in:
-            line = line.strip()
-            if line:
-                parts = line.split()
-                if len(parts) == 2:
-                    # Convert from 1-based to 0-based indexing
-                    u = int(parts[0]) - 1
-                    v = int(parts[1]) - 1
-                    f_out.write(f"{u} {v}\n")
-    
-    print(f"  Saved as {output_file} (converted to 0-based indexing)")
-
-def preprocess_iscas89():
-    """
-    Process iscas89-s27.txt (already 0-based, just copy and verify)
-    """
-    input_file = "raw_data/iscas89-s27.txt"
-    output_file = "iscas89-s27.txt"
-    
-    print(f"Processing {input_file}...")
-    
-    # Read and clean the file
-    with open(input_file, 'r') as f_in, open(output_file, 'w') as f_out:
-        for line in f_in:
-            line = line.strip()
-            if line:
-                parts = line.split()
-                if len(parts) == 2:
-                    u = int(parts[0])
-                    v = int(parts[1])
-                    f_out.write(f"{u} {v}\n")
-    
-    print(f"  Saved as {output_file} (cleaned format)")
-
-def preprocess_chesapeake():
-    """
-    Process chesapeake.mtx file - convert to standard edge list format
-    """
-    input_file = "raw_data/chesapeake.mtx"
-    output_file = "chesapeake.txt"
-    
-    print(f"Processing {input_file}...")
-    
-    # Read the matrix file and convert to edge list
     edges = []
     with open(input_file, 'r') as f:
         for line in f:
             line = line.strip()
-            if line:
+            if line and not line.startswith('%') and not line.startswith('#'):
                 parts = line.split()
                 if len(parts) >= 2:
-                    u = int(parts[0])
-                    v = int(parts[1])
-                    edges.append((u, v))
+                    try:
+                        u, v = int(parts[0]), int(parts[1])
+                        # Convert to 0-based indexing
+                        edges.append((u-1, v-1))
+                    except ValueError:
+                        continue
     
-    # Find min node to adjust to 0-based indexing
-    if edges:
-        min_node = min(min(u, v) for u, v in edges)
-        
-        # Write edges with 0-based indexing
-        with open(output_file, 'w') as f:
-            for u, v in edges:
-                u_adj = u - min_node
-                v_adj = v - min_node
-                f.write(f"{u_adj} {v_adj}\n")
-        
-        print(f"  Saved as {output_file} (converted to 0-based indexing)")
-        print(f"  Original range: {min_node} to {max(max(u, v) for u, v in edges)}")
-        print(f"  Adjusted range: 0 to {max(max(u, v) for u, v in edges) - min_node}")
+    # Remove duplicate edges and self-loops
+    edges = list(set(edges))
+    edges = [(u, v) for u, v in edges if u != v]
+    
+    # Relabel nodes to ensure consecutive 0-based indexing
+    G = nx.Graph()
+    G.add_edges_from(edges)
+    G = nx.convert_node_labels_to_integers(G, first_label=0)
+    
+    # Save preprocessed data
+    with open(output_file, 'w') as f:
+        for u, v in G.edges():
+            f.write(f"{u} {v}\n")
+    
+    print(f"  Nodes: {G.number_of_nodes()}, Edges: {G.number_of_edges()}")
+    return G.number_of_nodes(), G.number_of_edges()
 
-def verify_datasets():
+def preprocess_iscas_file(input_file, output_file):
     """
-    Verify the processed datasets and provide statistics
+    Preprocess ISCAS89 circuit files.
+    These appear to be already 0-based indexed.
     """
-    print("\nVerifying processed datasets:")
-    print("=" * 50)
+    print(f"Processing ISCAS file: {input_file}")
     
-    datasets = ["karate.txt", "iscas89-s27.txt", "chesapeake.txt"]
+    edges = []
+    with open(input_file, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('%') and not line.startswith('#'):
+                parts = line.split()
+                if len(parts) >= 2:
+                    try:
+                        u, v = int(parts[0]), int(parts[1])
+                        edges.append((u, v))
+                    except ValueError:
+                        continue
     
-    for dataset in datasets:
-        if os.path.exists(dataset):
-            print(f"\n{dataset}:")
+    # Remove duplicate edges and self-loops
+    edges = list(set(edges))
+    edges = [(u, v) for u, v in edges if u != v]
+    
+    # Relabel nodes to ensure consecutive 0-based indexing
+    G = nx.Graph()
+    G.add_edges_from(edges)
+    G = nx.convert_node_labels_to_integers(G, first_label=0)
+    
+    # Save preprocessed data
+    with open(output_file, 'w') as f:
+        for u, v in G.edges():
+            f.write(f"{u} {v}\n")
+    
+    print(f"  Nodes: {G.number_of_nodes()}, Edges: {G.number_of_edges()}")
+    return G.number_of_nodes(), G.number_of_edges()
+
+def preprocess_soc_tribes_file(input_file, output_file):
+    """
+    Preprocess social network (tribes) files.
+    These files may have header lines and weight information.
+    """
+    print(f"Processing SOC-tribes file: {input_file}")
+    
+    edges = []
+    with open(input_file, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('%') and not line.startswith('#'):
+                parts = line.split()
+                if len(parts) >= 2:
+                    try:
+                        u, v = int(parts[0]), int(parts[1])
+                        # Convert to 0-based indexing (assuming 1-based input)
+                        edges.append((u-1, v-1))
+                    except ValueError:
+                        continue
+    
+    # Remove duplicate edges and self-loops
+    edges = list(set(edges))
+    edges = [(u, v) for u, v in edges if u != v and u >= 0 and v >= 0]
+    
+    # Relabel nodes to ensure consecutive 0-based indexing
+    G = nx.Graph()
+    G.add_edges_from(edges)
+    G = nx.convert_node_labels_to_integers(G, first_label=0)
+    
+    # Save preprocessed data
+    with open(output_file, 'w') as f:
+        for u, v in G.edges():
+            f.write(f"{u} {v}\n")
+    
+    print(f"  Nodes: {G.number_of_nodes()}, Edges: {G.number_of_edges()}")
+    return G.number_of_nodes(), G.number_of_edges()
+
+def preprocess_generic_file(input_file, output_file):
+    """
+    Preprocess generic graph files.
+    Assumes space-separated edge list format.
+    """
+    print(f"Processing generic file: {input_file}")
+    
+    edges = []
+    with open(input_file, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('%') and not line.startswith('#'):
+                parts = line.split()
+                if len(parts) >= 2:
+                    try:
+                        u, v = int(parts[0]), int(parts[1])
+                        edges.append((u, v))
+                    except ValueError:
+                        continue
+    
+    # Remove duplicate edges and self-loops
+    edges = list(set(edges))
+    edges = [(u, v) for u, v in edges if u != v]
+    
+    # Relabel nodes to ensure consecutive 0-based indexing
+    G = nx.Graph()
+    G.add_edges_from(edges)
+    G = nx.convert_node_labels_to_integers(G, first_label=0)
+    
+    # Save preprocessed data
+    with open(output_file, 'w') as f:
+        for u, v in G.edges():
+            f.write(f"{u} {v}\n")
+    
+    print(f"  Nodes: {G.number_of_nodes()}, Edges: {G.number_of_edges()}")
+    return G.number_of_nodes(), G.number_of_edges()
+
+def preprocess_all_datasets():
+    """
+    Main function to preprocess all real-world datasets.
+    """
+    # Get the directory where this script is located
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    raw_data_dir = os.path.join(script_dir, "raw_data")
+    output_dir = os.path.join(script_dir, "")
+    
+    # Check if raw_data directory exists
+    if not os.path.exists(raw_data_dir):
+        print(f"Error: raw_data directory not found at {raw_data_dir}")
+        print("Please ensure the raw_data directory exists with dataset files.")
+        return None
+    
+    # Create output directory
+    os.makedirs(output_dir, exist_ok=True)
+    
+    print("Starting preprocessing of real-world datasets...")
+    print(f"Raw data directory: {raw_data_dir}")
+    print(f"Output directory: {output_dir}")
+    print("=" * 60)
+    
+    results = []
+    
+    # Get all files in raw_data directory
+    raw_files = [f for f in os.listdir(raw_data_dir) if f.endswith(('.edges', '.txt'))]
+    
+    for filename in sorted(raw_files):
+        input_path = os.path.join(raw_data_dir, filename)
+        
+        # Generate output filename (remove extension and add .txt)
+        base_name = os.path.splitext(filename)[0]
+        output_path = os.path.join(output_dir, f"{base_name}_processed.txt")
+        
+        try:
+            # Choose preprocessing function based on filename
+            if "ENZYMES" in filename:
+                nodes, edges = preprocess_enzymes_file(input_path, output_path)
+            elif "iscas" in filename.lower():
+                nodes, edges = preprocess_iscas_file(input_path, output_path)
+            elif "soc-tribes" in filename:
+                nodes, edges = preprocess_soc_tribes_file(input_path, output_path)
+            else:
+                nodes, edges = preprocess_generic_file(input_path, output_path)
             
-            # Read edges
-            edges = []
-            with open(dataset, 'r') as f:
-                for line in f:
-                    line = line.strip()
-                    if line:
-                        parts = line.split()
-                        if len(parts) == 2:
-                            u, v = int(parts[0]), int(parts[1])
-                            edges.append((u, v))
+            results.append({
+                'original_file': filename,
+                'processed_file': f"{base_name}_processed.txt",
+                'nodes': nodes,
+                'edges': edges,
+                'status': 'success'
+            })
             
-            if edges:
-                nodes = set()
-                for u, v in edges:
-                    nodes.add(u)
-                    nodes.add(v)
-                
-                print(f"  Nodes: {len(nodes)} (range: {min(nodes)} to {max(nodes)})")
-                print(f"  Edges: {len(edges)}")
-                print(f"  Density: {2 * len(edges) / (len(nodes) * (len(nodes) - 1)):.4f}")
-                
-                # Check if 0-based
-                if min(nodes) == 0:
-                    print("  ✓ 0-based indexing")
-                else:
-                    print(f"  ⚠ Non-zero based indexing (starts at {min(nodes)})")
-        else:
-            print(f"  ⚠ {dataset} not found")
+        except Exception as e:
+            print(f"  Error processing {filename}: {e}")
+            results.append({
+                'original_file': filename,
+                'processed_file': 'N/A',
+                'nodes': 0,
+                'edges': 0,
+                'status': f'error: {e}'
+            })
+        
+        print()
+    
+    # Save summary
+    summary_df = pd.DataFrame(results)
+    summary_path = os.path.join(output_dir, "preprocessing_summary.csv")
+    summary_df.to_csv(summary_path, index=False)
+    
+    print("=" * 60)
+    print("Preprocessing Summary:")
+    print(summary_df.to_string(index=False))
+    print(f"\nSummary saved to: {summary_path}")
+    print(f"Processed files saved to: {output_dir}/")
+    
+    return results
 
 def main():
-    """
-    Main preprocessing function
-    """
-    print("Real-world Dataset Preprocessing")
-    print("=" * 40)
-    
-    # Change to the real-world-dataset directory
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    os.chdir(script_dir)
-    
+    """Main execution function"""
     try:
-        # Process each dataset
-        preprocess_karate()
-        preprocess_iscas89()
-        preprocess_chesapeake()
-        
-        # Verify results
-        verify_datasets()
-        
-        print("\n" + "=" * 40)
-        print("Preprocessing completed successfully!")
-        
+        results = preprocess_all_datasets()
+        print("\nPreprocessing completed successfully!")
+        return results
     except Exception as e:
         print(f"Error during preprocessing: {e}")
+        return None
 
 if __name__ == "__main__":
     main()
