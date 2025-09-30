@@ -1,33 +1,41 @@
 id,heuristics,n,m,val,penalty_param,feasible_rate,average,std,range
 synthetic_random_n10.txt,Greedy,10,17,62.0,,,,,
 synthetic_random_n10.txt,Spectral,10,17,42.0,,,,,
-synthetic_random_n10.txt,SA,10,17,,103.0,0.7,62.285714285714285,6.40790328343023,"(53, 75)"
+synthetic_random_n10.txt,SA,10,17,,103.0,1.0,43.1,1.9209372712298547,"(40, 46)"
 synthetic_random_n10.txt,TB,10,17,,103.0,1.0,35.0,0.0,"(35, 35)"
+synthetic_random_n15.txt,Greedy,15,38,209.0,,,,,
+synthetic_random_n15.txt,Spectral,15,38,166.0,,,,,
+synthetic_random_n15.txt,SA,15,38,,348.0,1.0,154.1,5.539855593785817,"(144, 162)"
+synthetic_random_n15.txt,TB,15,38,,348.0,0.2,133.0,2.0,"(131, 135)"
 synthetic_random_n20.txt,Greedy,20,67,453.0,,,,,
 synthetic_random_n20.txt,Spectral,20,67,355.0,,,,,
-synthetic_random_n20.txt,SA,20,67,,822.0,0.0,0.0,0.0,"(0, 0)"
-synthetic_random_n20.txt,TB,20,67,,822.0,1.0,313.6,2.3748684174075834,"(307, 316)"
-synthetic_random_n30.txt,Greedy,30,143,1525.0,,,,,
-synthetic_random_n30.txt,Spectral,30,143,1100.0,,,,,
-synthetic_random_n30.txt,SA,30,143,,2675.0,0.0,0.0,0.0,"(0, 0)"
-synthetic_random_n30.txt,TB,30,143,,2675.0,0.0,0.0,0.0,"(0, 0)"
-synthetic_random_n50.txt,Greedy,50,368,6059.0,,,,,
-synthetic_random_n50.txt,Spectral,50,368,5040.0,,,,,
-synthetic_random_n50.txt,SA,50,368,,11740.0,0.0,0.0,0.0,"(0, 0)"
-synthetic_random_n50.txt,TB,50,368,,11740.0,0.0,0.0,0.0,"(0, 0)"
-synthetic_random_n100.txt,Greedy,100,1477,48511.0,,,,,
-synthetic_random_n100.txt,Spectral,100,1477,42483.0,,,,,
-synthetic_random_n100.txt,SA,100,1477,,94177.0,0.0,0.0,0.0,"(0, 0)"
-synthetic_random_n100.txt,TB,100,1477,,94177.0,0.0,0.0,0.0,"(0, 0)"
-real_world_iscas89-s27.txt,Greedy,9,8,27.0,,,,,
-real_world_iscas89-s27.txt,Spectral,9,8,9.0,,,,,
-real_world_iscas89-s27.txt,SA,9,8,,50.0,0.6,26.166666666666668,1.7716909687891083,"(24, 29)"
-real_world_iscas89-s27.txt,TB,9,8,,50.0,1.0,9.0,0.0,"(9, 9)"
-real_world_karate.txt,Greedy,34,78,982.0,,,,,
-real_world_karate.txt,Spectral,34,78,403.0,,,,,
-real_world_karate.txt,SA,34,78,,2002.0,0.0,0.0,0.0,"(0, 0)"
-real_world_karate.txt,TB,34,78,,2002.0,0.0,0.0,0.0,"(0, 0)"
-real_world_chesapeake.txt,Greedy,39,170,2481.0,,,,,
-real_world_chesapeake.txt,Spectral,39,170,1231.0,,,,,
-real_world_chesapeake.txt,SA,39,170,,4539.0,0.0,0.0,0.0,"(0, 0)"
-real_world_chesapeake.txt,TB,39,170,,4539.0,0.0,0.0,0.0,"(0, 0)"
+synthetic_random_n20.txt,SA,20,67,,822.0,1.0,392.6,11.99333148045196,"(375, 420)"
+synthetic_random_n20.txt,TB,20,67,,822.0,0.0,0.0,0.0,"(0, 0)"
+synthetic_random_n25.txt,Greedy,25,105,927.0,,,,,
+synthetic_random_n25.txt,Spectral,25,105,641.0,,,,,
+synthetic_random_n25.txt,SA,25,105,,1610.0,1.0,807.2,18.269099594670777,"(764, 830)"
+synthetic_random_n25.txt,TB,25,105,,1610.0,0.0,0.0,0.0,"(0, 0)"
+real_world_ENZYMES_g157_processed.txt,Greedy,8,15,45.0,,,,,
+real_world_ENZYMES_g157_processed.txt,Spectral,8,15,25.0,,,,,
+real_world_ENZYMES_g157_processed.txt,SA,8,15,,65.0,1.0,26.4,1.0198039027185568,"(25, 28)"
+real_world_ENZYMES_g157_processed.txt,TB,8,15,,65.0,1.0,25.0,0.0,"(25, 25)"
+real_world_iscas89-s27_processed.txt,Greedy,9,8,29.0,,,,,
+real_world_iscas89-s27_processed.txt,Spectral,9,8,9.0,,,,,
+real_world_iscas89-s27_processed.txt,SA,9,8,,50.0,1.0,13.2,1.0770329614269007,"(12, 15)"
+real_world_iscas89-s27_processed.txt,TB,9,8,,50.0,1.0,9.0,0.0,"(9, 9)"
+real_world_ENZYMES_g373_processed.txt,Greedy,10,20,60.0,,,,,
+real_world_ENZYMES_g373_processed.txt,Spectral,10,20,36.0,,,,,
+real_world_ENZYMES_g373_processed.txt,SA,10,20,,115.0,1.0,43.9,4.2296571965113205,"(38, 50)"
+real_world_ENZYMES_g373_processed.txt,TB,10,20,,115.0,1.0,36.0,0.0,"(36, 36)"
+real_world_ENZYMES_g217_processed.txt,Greedy,15,34,146.0,,,,,
+real_world_ENZYMES_g217_processed.txt,Spectral,15,34,72.0,,,,,
+real_world_ENZYMES_g217_processed.txt,SA,15,34,,322.0,1.0,123.6,13.55138369318794,"(99, 141)"
+real_world_ENZYMES_g217_processed.txt,TB,15,34,,322.0,0.9,86.55555555555556,27.35410231720732,"(72, 143)"
+real_world_soc-tribes_processed.txt,Greedy,16,58,298.0,,,,,
+real_world_soc-tribes_processed.txt,Spectral,16,58,217.0,,,,,
+real_world_soc-tribes_processed.txt,SA,16,58,,510.0,1.0,271.6,12.034949106664307,"(244, 290)"
+real_world_soc-tribes_processed.txt,TB,16,58,,510.0,0.3,213.66666666666666,0.9428090415820634,"(213, 215)"
+real_world_wafa-hightech_processed.txt,Greedy,21,159,1202.0,,,,,
+real_world_wafa-hightech_processed.txt,Spectral,21,159,1001.0,,,,,
+real_world_wafa-hightech_processed.txt,SA,21,159,,1446.0,1.0,1092.2,11.981652640600128,"(1067, 1106)"
+real_world_wafa-hightech_processed.txt,TB,21,159,,1446.0,0.0,0.0,0.0,"(0, 0)"
