@@ -8,6 +8,7 @@ import os
 def generate_random_graphs():
     """
     Generate random graphs using Erdős–Rényi model and save as edge lists.
+    Ensures all graphs are connected and use all vertices.
     """
     # Parameters from comments
     node_sizes = [5, 10, 15, 20, 25]
@@ -28,10 +29,38 @@ def generate_random_graphs():
     for i, n in enumerate(node_sizes):
         print(f"Generating graph {i+1}/{len(node_sizes)}: {n} nodes")
         
-        # Generate random graph using Erdős–Rényi model
-        # Use different seed for each graph to ensure variety
+        # Generate connected random graph
         current_seed = seed
-        G = nx.gnp_random_graph(n, edge_prob, seed=current_seed)
+        G = None
+        attempts = 0
+        max_attempts = 1000
+        
+        # Keep generating until we get a connected graph
+        while G is None or not nx.is_connected(G):
+            G = nx.gnp_random_graph(n, edge_prob, seed=current_seed + attempts)
+            attempts += 1
+            
+            if attempts >= max_attempts:
+                # If we can't generate a connected graph with the given probability,
+                # create a minimum spanning tree and add random edges
+                print(f"  Warning: Generating connected graph directly with p={edge_prob}")
+                G = nx.random_tree(n, seed=current_seed)
+                # Add additional random edges while maintaining connectivity
+                import random
+                random.seed(current_seed)
+                total_possible_edges = n * (n - 1) // 2
+                target_edges = int(total_possible_edges * edge_prob)
+                
+                while G.number_of_edges() < target_edges:
+                    u = random.randint(0, n-1)
+                    v = random.randint(0, n-1)
+                    if u != v and not G.has_edge(u, v):
+                        G.add_edge(u, v)
+                break
+        
+        # Verify the graph uses all vertices and is connected
+        assert G.number_of_nodes() == n, f"Graph should have {n} nodes, but has {G.number_of_nodes()}"
+        assert nx.is_connected(G), "Graph must be connected"
         
         # Get number of edges
         m = G.number_of_edges()
@@ -47,6 +76,7 @@ def generate_random_graphs():
         print(f"  Saved: {filename}")
         print(f"  Edges: {m}")
         print(f"  Density: {2*m/(n*(n-1)):.4f}")
+        print(f"  Connected: {nx.is_connected(G)}")
         print()
 
 def main():
