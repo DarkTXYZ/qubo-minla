@@ -49,7 +49,7 @@ def create_config():
                         help='Number of worker processes (default: CPU count)')
     
     # Output configuration
-    parser.add_argument('--results-path', type=str, default='results.csv',
+    parser.add_argument('--results-path', type=str, default='exp_2_results.csv',
                         help='Output path for results CSV file')
     parser.add_argument('--log-file', type=str, default='experiment_log.txt',
                         help='Log file path')
