@@ -1,0 +1,45 @@
+id,heuristics,n,m,val,penalty_param,feasible_rate,average,std,range
+synthetic_random_n5.txt,Greedy,5,6,11.0,,,,,
+synthetic_random_n5.txt,Spectral,5,6,8.0,,,,,
+synthetic_random_n5.txt,SA_warm,5,6,,16.0,1.0,9.9,1.6401219466856727,"(8, 12)"
+synthetic_random_n5.txt,TB_warm,5,6,,16.0,1.0,8.0,0.0,"(8, 8)"
+synthetic_random_n10.txt,Greedy,10,17,62.0,,,,,
+synthetic_random_n10.txt,Spectral,10,17,42.0,,,,,
+synthetic_random_n10.txt,SA_warm,10,17,,103.0,0.9,57.111111111111114,5.445578113263488,"(51, 68)"
+synthetic_random_n10.txt,TB_warm,10,17,,103.0,1.0,35.0,0.0,"(35, 35)"
+synthetic_random_n15.txt,Greedy,15,38,209.0,,,,,
+synthetic_random_n15.txt,Spectral,15,38,166.0,,,,,
+synthetic_random_n15.txt,SA_warm,15,38,,348.0,0.9,204.33333333333334,10.832051206181282,"(186, 226)"
+synthetic_random_n15.txt,TB_warm,15,38,,348.0,1.0,136.5,7.5,"(129, 155)"
+synthetic_random_n20.txt,Greedy,20,67,461.0,,,,,
+synthetic_random_n20.txt,Spectral,20,67,355.0,,,,,
+synthetic_random_n20.txt,SA_warm,20,67,,822.0,0.5,451.2,25.623426780975258,"(416, 485)"
+synthetic_random_n20.txt,TB_warm,20,67,,822.0,1.0,351.0,0.0,"(351, 351)"
+synthetic_random_n25.txt,Greedy,25,105,943.0,,,,,
+synthetic_random_n25.txt,Spectral,25,105,641.0,,,,,
+synthetic_random_n25.txt,SA_warm,25,105,,1610.0,0.3,964.6666666666666,33.47967874530592,"(924, 1006)"
+synthetic_random_n25.txt,TB_warm,25,105,,1610.0,1.0,620.9,9.802550688468791,"(612, 641)"
+real_world_ENZYMES_g157_processed.txt,Greedy,8,15,43.0,,,,,
+real_world_ENZYMES_g157_processed.txt,Spectral,8,15,25.0,,,,,
+real_world_ENZYMES_g157_processed.txt,SA_warm,8,15,,65.0,1.0,43.5,1.91049731745428,"(40, 46)"
+real_world_ENZYMES_g157_processed.txt,TB_warm,8,15,,65.0,1.0,25.0,0.0,"(25, 25)"
+real_world_iscas89-s27_processed.txt,Greedy,9,8,31.0,,,,,
+real_world_iscas89-s27_processed.txt,Spectral,9,8,9.0,,,,,
+real_world_iscas89-s27_processed.txt,SA_warm,9,8,,50.0,1.0,21.9,4.504442251822083,"(16, 33)"
+real_world_iscas89-s27_processed.txt,TB_warm,9,8,,50.0,1.0,9.0,0.0,"(9, 9)"
+real_world_ENZYMES_g373_processed.txt,Greedy,10,20,60.0,,,,,
+real_world_ENZYMES_g373_processed.txt,Spectral,10,20,36.0,,,,,
+real_world_ENZYMES_g373_processed.txt,SA_warm,10,20,,115.0,1.0,70.5,7.172865536171719,"(60, 83)"
+real_world_ENZYMES_g373_processed.txt,TB_warm,10,20,,115.0,1.0,36.0,0.0,"(36, 36)"
+real_world_ENZYMES_g217_processed.txt,Greedy,15,34,148.0,,,,,
+real_world_ENZYMES_g217_processed.txt,Spectral,15,34,72.0,,,,,
+real_world_ENZYMES_g217_processed.txt,SA_warm,15,34,,322.0,1.0,176.1,19.418805318556547,"(135, 209)"
+real_world_ENZYMES_g217_processed.txt,TB_warm,15,34,,322.0,1.0,72.0,0.0,"(72, 72)"
+real_world_soc-tribes_processed.txt,Greedy,16,58,304.0,,,,,
+real_world_soc-tribes_processed.txt,Spectral,16,58,217.0,,,,,
+real_world_soc-tribes_processed.txt,SA_warm,16,58,,510.0,1.0,320.8,17.168575945604807,"(291, 357)"
+real_world_soc-tribes_processed.txt,TB_warm,16,58,,510.0,1.0,215.7,1.0049875621120892,"(213, 217)"
+real_world_wafa-hightech_processed.txt,Greedy,21,159,1206.0,,,,,
+real_world_wafa-hightech_processed.txt,Spectral,21,159,1001.0,,,,,
+real_world_wafa-hightech_processed.txt,SA_warm,21,159,,1446.0,0.3,1185.6666666666667,15.369522511198006,"(1164, 1198)"
+real_world_wafa-hightech_processed.txt,TB_warm,21,159,,1446.0,1.0,1000.6,0.66332495807108,"(999, 1001)"
